@@ -23,6 +23,7 @@ class Auth extends CI_Controller
 		if ($customer != null) {
 			if ($customer['password'] == $passwordHash) {
 				$response = [
+					'code' => 200,
 					'user_id' => $customer['id_customer'],
 					'username' => $customer['username'],
 					'nama' => $customer['nama'],
