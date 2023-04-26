@@ -2,21 +2,6 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 
 
-/**
- *
- * Controller Customer
- *
- * This controller for ...
- *
- * @package   CodeIgniter
- * @category  Controller CI
- * @author    Setiawan Jodi <jodisetiawan@fisip-untirta.ac.id>
- * @author    Raul Guerrero <r.g.c@me.com>
- * @link      https://github.com/setdjod/myci-extension/
- * @param     ...
- * @return    ...
- *
- */
 
 class Customer extends CI_Controller
 {
@@ -26,6 +11,7 @@ class Customer extends CI_Controller
 		parent::__construct();
 		$this->load->model('api/Ruangan_model', 'ruangan_model');
 		$this->load->model('api/Transaksi_model', 'transaksi_model');
+		$this->load->library('dompdfgenerator');
 	}
 
 	public function getAllRuangan()
@@ -91,6 +77,54 @@ class Customer extends CI_Controller
 	{
 		$userId = $this->input->get('user_id');
 		echo json_encode($this->transaksi_model->getTransactions($userId));
+	}
+
+	public function orderCancel()
+	{
+		$roomId = $this->input->post('room_id');
+		$transId = $this->input->post('trans_id');
+
+		$deleteTrans = $this->transaksi_model->delete($transId);
+		if ($deleteTrans == true) {
+
+			$dataRuangan = [
+				'status' => 1
+			];
+
+			$updateRuangan = $this->ruangan_model->updateRuangan($roomId, $dataRuangan);
+			if ($updateRuangan == true) {
+				$response = [
+					'code' => 200,
+					'status' => true
+				];
+				echo json_encode($response);
+			} else {
+				$response = [
+					'code' => 400,
+					'status' => false
+				];
+				echo json_encode($response);
+			}
+		} else {
+			$response = [
+				'code' => 400,
+				'status' => false
+			];
+			echo json_encode($response);
+		}
+	}
+
+	public function download_invoice($id)
+	{
+		// filename dari pdf ketika didownload
+		$file_pdf = 'Invoice';
+		// setting paper
+		$paper = 'A4';
+		//orientasi paper potrait / landscape
+		$orientation = "portrait";
+		$data['transaksi'] = $this->db->query("SELECT * FROM transaksi tr, mobil mb, customer cs WHERE tr.id_mobil=mb.id_mobil AND tr.id_customer=cs.id_customer AND tr.id_rental='$id'")->result();
+		$html = $this->load->view('customer/cetak_invoice', $data, true);
+		$this->dompdfgenerator->generate($html, $file_pdf, $paper, $orientation);
 	}
 }
 

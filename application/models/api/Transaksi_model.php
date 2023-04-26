@@ -34,4 +34,15 @@ class Transaksi_model extends CI_Model
 		$this->db->where('transaksi.id_customer', $userId);
 		return $this->db->get()->result();
 	}
+
+	public function delete($id)
+	{
+		$this->db->where('id_rental', $id);
+		$delete = $this->db->delete('transaksi');
+		if ($delete) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }
