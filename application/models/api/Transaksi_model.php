@@ -45,4 +45,15 @@ class Transaksi_model extends CI_Model
 			return false;
 		}
 	}
+
+	public function update($id, $data)
+	{
+		$this->db->where('id_rental', $id);
+		$update = $this->db->update('transaksi', $data);
+		if ($update) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

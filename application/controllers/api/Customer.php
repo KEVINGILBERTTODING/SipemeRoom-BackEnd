@@ -126,6 +126,83 @@ class Customer extends CI_Controller
 		$html = $this->load->view('customer/cetak_invoice', $data, true);
 		$this->dompdfgenerator->generate($html, $file_pdf, $paper, $orientation);
 	}
+
+	public function detailTransaction()
+	{
+		$id = $this->input->post('trans_id');
+		$data = $this->db->query("SELECT * FROM transaksi tr, mobil mb, customer cs WHERE tr.id_mobil=mb.id_mobil AND tr.id_customer=cs.id_customer AND tr.id_rental='$id'")->row_array();
+		$tanggalRental = new DateTime($data['tgl_rental']);
+		$tanggalKembali = new DateTime($data['tgl_kembali']);
+		$durasi = $tanggalKembali->diff($tanggalRental)->format("%a");
+		$detailTransaksi = [
+			'merek' => $data['merek'],
+			'tgl_rental' => $data['tgl_rental'],
+			'tgl_kembali' => $data['tgl_kembali'],
+			'durasi' => $durasi,
+			'status_pembayaran' => $data['status_pembayaran'],
+			'bukti_pembayaran' => $data['bukti_pembayaran']
+		];
+		echo json_encode($detailTransaksi);
+	}
+
+	public function uploadPersetujuan()
+	{
+		$transId = $this->input->post('trans_id');
+		$config['upload_path'] = './assets/upload/';
+		$config['allowed_types'] = 'pdf|jpg|jpeg|png';
+		$config['max_size'] = '4080';
+
+		$this->load->library('upload', $config);
+		$data2 = array();
+		$this->upload->initialize($config);
+
+
+
+		if ($this->upload->do_upload('bukti')) {
+			$data2['bukti'] = $this->upload->data('file_name');
+			$uploadBukti = true;
+		} else {
+			$response = [
+				'status' => false,
+				'code' => 400,
+				'message' => 'Format file tidak sesuai'
+
+			];
+			echo json_encode($response);
+			return;
+		}
+
+		// Cek apakah kedua upload berhasil
+		if ($uploadBukti == true) {
+
+			$data = [
+				'bukti_pembayaran' => $data2['bukti']
+
+			];
+			$update = $this->transaksi_model->update($transId, $data);
+			if ($update == true) {
+				$response = [
+					'status' => true,
+					'code' => 200
+				];
+				echo json_encode($response);
+			} else {
+				$response = [
+					'status' => false,
+					'code' => 400,
+					'message' => 'Gagal mengunggah berkas'
+				];
+				echo json_encode($response);
+			}
+		} else {
+			$response = [
+				'status' => false,
+				'code' => 400,
+				'message' => 'Gagal mengunggah berkas'
+			];
+			echo json_encode($response);
+		}
+	}
 }
 
 
