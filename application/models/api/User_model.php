@@ -35,6 +35,25 @@ class User_model extends CI_Model
 			return false;
 		}
 	}
+
+	public function getUserById($id)
+	{
+		$this->db->select('*');
+		$this->db->from('customer');
+		$this->db->where('id_customer', $id);
+		return $this->db->get()->result();
+	}
+
+	public function update($id, $data)
+	{
+		$this->db->where('id_customer', $id);
+		$update = $this->db->update('customer', $data);
+		if ($update) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }
 
 /* End of file User_model.php */
