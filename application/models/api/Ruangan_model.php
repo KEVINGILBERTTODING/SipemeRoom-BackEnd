@@ -36,6 +36,28 @@ class Ruangan_model extends CI_Model
 			return false;
 		}
 	}
+
+	public function insert($data)
+	{
+		$insert = $this->db->insert('mobil', $data);
+		if ($insert) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public function deleteRoom($idRoom)
+	{
+		$this->db->where('id_mobil', $idRoom);
+		$delete = $this->db->delete('mobil');
+
+		if ($delete) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }
 
 /* End of file Ruangan_model.php */
