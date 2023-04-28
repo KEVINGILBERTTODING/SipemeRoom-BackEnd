@@ -220,6 +220,72 @@ class Admin extends CI_Controller
 			}
 		}
 	}
+
+	public function insertTipe()
+	{
+		$data  = [
+			'kode_tipe' => $this->input->post('kode_tipe'),
+			'nama_tipe' => $this->input->post('nama_tipe')
+		];
+
+		$insert = $this->tipe_model->insert($data);
+		if ($insert == true) {
+			$response = [
+				'status' => true,
+				'code' => 200
+			];
+			echo json_encode($response);
+		} else {
+			$response = [
+				'status' => false,
+				'code' => 404
+			];
+			echo json_encode($response);
+		}
+	}
+
+	public function deleteTipe()
+	{
+		$id = $this->input->post('id');
+		$delete = $this->tipe_model->deleteTipe($id);
+		if ($delete == true) {
+			$response = [
+				'status' => true,
+				'code' => 200
+			];
+			echo json_encode($response);
+		} else {
+			$response = [
+				'status' => false,
+				'code' => 404
+			];
+			echo json_encode($response);
+		}
+	}
+
+	public function updateTipe()
+	{
+		$id = $this->input->post('id');
+		$data  = [
+			'kode_tipe' => $this->input->post('kode_tipe'),
+			'nama_tipe' => $this->input->post('nama_tipe')
+		];
+
+		$update = $this->tipe_model->updateTipe($id, $data);
+		if ($update == true) {
+			$response = [
+				'status' => true,
+				'code' => 200
+			];
+			echo json_encode($response);
+		} else {
+			$response = [
+				'status' => false,
+				'code' => 404
+			];
+			echo json_encode($response);
+		}
+	}
 }
 
 
