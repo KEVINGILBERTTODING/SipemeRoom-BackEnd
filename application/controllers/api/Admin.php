@@ -503,6 +503,14 @@ class Admin extends CI_Controller
 		$html = $this->load->view('admin/print_laporan', $data, true);
 		$this->dompdfgenerator->generate($html, $file_pdf, $paper, $orientation);
 	}
+
+	public function filterLaporan()
+	{
+		$dari   = $this->input->get('dari');
+		$sampai = $this->input->get('sampai');
+		$data = $this->db->query("SELECT * FROM transaksi tr, mobil mb, customer cs WHERE tr.id_mobil=mb.id_mobil AND tr.id_customer=cs.id_customer AND date(tgl_rental) >= '$dari' AND date(tgl_rental) <= '$sampai'")->result();
+		echo json_encode($data);
+	}
 }
 
 
