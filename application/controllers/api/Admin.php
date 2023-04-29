@@ -15,6 +15,7 @@ class Admin extends CI_Controller
 
 		$this->load->model('api/Tipe_model', 'tipe_model');
 		$this->load->model('api/Auth_model', 'auth_model');
+		$this->load->library('dompdfgenerator');
 	}
 
 	public function getAllRuangan()
@@ -485,6 +486,22 @@ class Admin extends CI_Controller
 			];
 			echo json_encode($response);
 		}
+	}
+
+	public function  downloadLaporan()
+	{
+		$dari   = $this->input->get('dari');
+		$sampai = $this->input->get('sampai');
+
+		// filename dari pdf ketika didownload
+		$file_pdf = 'Laporan_' . $dari . '-' . $sampai;
+		// setting paper
+		$paper = 'A4';
+		//orientasi paper potrait / landscape
+		$orientation = "portrait";
+		$data['laporan'] = $this->db->query("SELECT * FROM transaksi tr, mobil mb, customer cs WHERE tr.id_mobil=mb.id_mobil AND tr.id_customer=cs.id_customer AND date(tgl_rental) >= '$dari' AND date(tgl_rental) <= '$sampai'")->result();
+		$html = $this->load->view('admin/print_laporan', $data, true);
+		$this->dompdfgenerator->generate($html, $file_pdf, $paper, $orientation);
 	}
 }
 
