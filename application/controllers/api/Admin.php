@@ -10,7 +10,9 @@ class Admin extends CI_Controller
 	{
 		parent::__construct();
 		$this->load->model('api/Ruangan_model', 'ruangan_model');
+		$this->load->model('api/User_model', 'user_model');
 		$this->load->model('api/Tipe_model', 'tipe_model');
+		$this->load->model('api/Auth_model', 'auth_model');
 	}
 
 	public function getAllRuangan()
@@ -284,6 +286,108 @@ class Admin extends CI_Controller
 				'code' => 404
 			];
 			echo json_encode($response);
+		}
+	}
+
+	public function getAllUser()
+	{
+		echo json_encode($this->user_model->getAllUser());
+	}
+
+	public function deleteUser()
+	{
+		$id = $this->input->post('customer_id');
+		$delete = $this->user_model->deleteUser($id);
+		if ($delete == true) {
+			$response = [
+				'status' => true,
+				'code' => 200
+			];
+			echo json_encode($response);
+		} else {
+			$response = [
+				'status' => false,
+				'code' => 404
+			];
+			echo json_encode($response);
+		}
+	}
+
+	public function updateCustomer()
+	{
+		$username = $this->input->post('username');
+		$userId = $this->input->post('user_id');
+		$validasi = $this->auth_model->auth('customer', $username);
+		$nama = $this->input->post('nama');
+		$alamat = $this->input->post('alamat');
+		$gender = $this->input->post('gender');
+		$noTelp = $this->input->post('no_telepon');
+		$password = $this->input->post('password');
+		$noKtp = $this->input->post('no_ktp');
+
+		if ($validasi == null) {
+
+
+			$data = [
+				'nama' => $nama,
+				'username' => $username,
+				'alamat'  => $alamat,
+				'gender' => $gender,
+				'password' => md5($password),
+				'no_telepon' => $noTelp,
+				'no_ktp' => $noKtp
+			];
+
+			$update = $this->user_model->update($userId, $data);
+			if ($update == true) {
+				$response = [
+					'code' => 200,
+					'status' => true
+				];
+				echo json_encode($response);
+			} else {
+				$response = [
+					'code' => 404,
+					'status' => false,
+					'message' => 'Gagal mengubah profil'
+				];
+				echo json_encode($response);
+			}
+		} else {
+			if ($validasi['id_customer'] == $userId) {
+				$data = [
+					'nama' => $nama,
+					'username' => $username,
+					'alamat'  => $alamat,
+					'password' => md5($password),
+					'gender' => $gender,
+					'no_telepon' => $noTelp,
+					'no_ktp' => $noKtp
+				];
+
+				$update = $this->user_model->update($userId, $data);
+				if ($update == true) {
+					$response = [
+						'code' => 200,
+						'status' => true
+					];
+					echo json_encode($response);
+				} else {
+					$response = [
+						'code' => 404,
+						'status' => false,
+						'message' => 'Gagal mengubah profil'
+					];
+					echo json_encode($response);
+				}
+			} else {
+				$response = [
+					'code' => 404,
+					'status' => false,
+					'message' => 'Username telah digunakan'
+				];
+				echo json_encode($response);
+			}
 		}
 	}
 }

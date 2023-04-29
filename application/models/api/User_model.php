@@ -54,6 +54,23 @@ class User_model extends CI_Model
 			return false;
 		}
 	}
+	public function getAllUser()
+	{
+		$this->db->select('*');
+		$this->db->from('customer');
+		return $this->db->get()->result();
+	}
+
+	public function deleteUser($id)
+	{
+		$this->db->where('id_customer', $id);
+		$delete = $this->db->delete('customer');
+		if ($delete) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }
 
 /* End of file User_model.php */
