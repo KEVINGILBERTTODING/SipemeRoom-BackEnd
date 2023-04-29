@@ -11,6 +11,8 @@ class Admin extends CI_Controller
 		parent::__construct();
 		$this->load->model('api/Ruangan_model', 'ruangan_model');
 		$this->load->model('api/User_model', 'user_model');
+		$this->load->model('api/Transaksi_model', 'transaksi_model');
+
 		$this->load->model('api/Tipe_model', 'tipe_model');
 		$this->load->model('api/Auth_model', 'auth_model');
 	}
@@ -388,6 +390,45 @@ class Admin extends CI_Controller
 				];
 				echo json_encode($response);
 			}
+		}
+	}
+
+	public function getAllTransactions()
+	{
+		echo json_encode($this->transaksi_model->getAllTransactions());
+	}
+
+	public function downloadBUktiPersetujuan($transId)
+	{
+
+		$file = $this->transaksi_model->getTransaksiById($transId);
+
+		$path = './assets/upload/' . $file['bukti_pembayaran'];
+		header('Content-Type: application/pdf');
+		header('Content-Disposition: attachment; filename="' . basename($path) . '"');
+		header('Content-Length: ' . filesize($path));
+		readfile($path);
+	}
+
+	public function konfirmasiBukti()
+	{
+		$transId = $this->input->post('trans_id');
+		$data = [
+			'status_pembayaran' => 1
+		];
+		$update = $this->transaksi_model->update($transId, $data);
+		if ($update == true) {
+			$response = [
+				'status' => true,
+				'code' => 200
+			];
+			echo json_encode($response);
+		} else {
+			$response = [
+				'status' => false,
+				'code' => 404
+			];
+			echo json_encode($response);
 		}
 	}
 }

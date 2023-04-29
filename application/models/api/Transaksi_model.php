@@ -56,4 +56,23 @@ class Transaksi_model extends CI_Model
 			return false;
 		}
 	}
+
+
+	public function getAllTransactions()
+	{
+		$this->db->select('transaksi.*, customer.nama, mobil.merek, mobil.no_plat');
+		$this->db->from('transaksi');
+		$this->db->join('customer', 'customer.id_customer = transaksi.id_customer', 'left');
+		$this->db->join('mobil', 'mobil.id_mobil = transaksi.id_mobil', 'left');
+		$this->db->order_by('transaksi.id_rental', 'desc');
+		return $this->db->get()->result();
+	}
+
+	public function getTransaksiById($id)
+	{
+		$this->db->select('*');
+		$this->db->from('transaksi');
+		$this->db->where('id_rental', $id);
+		return $this->db->get()->row_array();
+	}
 }
