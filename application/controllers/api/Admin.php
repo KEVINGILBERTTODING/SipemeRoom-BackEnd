@@ -402,11 +402,25 @@ class Admin extends CI_Controller
 	{
 
 		$file = $this->transaksi_model->getTransaksiById($transId);
-
 		$path = './assets/upload/' . $file['bukti_pembayaran'];
-		header('Content-Type: application/pdf');
+
+		// Memeriksa tipe file yang diambil dari database
+		if (strpos($file['bukti_pembayaran'], '.pdf') !== false) {
+			// Jika tipe file adalah PDF, atur jenis konten sebagai 'application/pdf'
+			header('Content-Type: application/pdf');
+		} else if (strpos($file['bukti_pembayaran'], '.jpg') !== false) {
+			// Jika tipe file adalah JPG, atur jenis konten sebagai 'image/jpeg'
+			header('Content-Type: image/jpeg');
+		} else if (strpos($file['bukti_pembayaran'], '.png') !== false) {
+			// Jika tipe file adalah PNG, atur jenis konten sebagai 'image/png'
+			header('Content-Type: image/png');
+		}
+
+		// Mengatur header untuk mengunduh file
 		header('Content-Disposition: attachment; filename="' . basename($path) . '"');
 		header('Content-Length: ' . filesize($path));
+
+		// Membaca dan mengirimkan file ke pengguna
 		readfile($path);
 	}
 
@@ -426,6 +440,47 @@ class Admin extends CI_Controller
 		} else {
 			$response = [
 				'status' => false,
+				'code' => 404
+			];
+			echo json_encode($response);
+		}
+	}
+
+	public function deleteTransaction()
+	{
+		$id = $this->input->post('trans_id');
+		$delete = $this->transaksi_model->delete($id);
+		if ($delete == true) {
+			$response = [
+				'status' => true,
+				'code' => 200
+			];
+			echo json_encode($response);
+		} else {
+			$response = [
+				'status' => false,
+				'code' => 404
+			];
+			echo json_encode($response);
+		}
+	}
+
+	public function sewaSelesai()
+	{
+		$transId = $this->input->post('trans_id');
+		$data = [
+			'tgl_pengembalian' => $this->input->post('tanggal'),
+			'status_rental' => 'Selesai',
+			'status_pengembalian' => 'Kembali'
+		];
+		$update = $this->transaksi_model->update($transId, $data);
+		if ($update == true) {
+			$response = [
+				'code' => 200
+			];
+			echo json_encode($response);
+		} else {
+			$response = [
 				'code' => 404
 			];
 			echo json_encode($response);
