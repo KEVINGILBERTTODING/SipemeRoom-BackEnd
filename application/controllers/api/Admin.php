@@ -12,7 +12,6 @@ class Admin extends CI_Controller
 		$this->load->model('api/Ruangan_model', 'ruangan_model');
 		$this->load->model('api/User_model', 'user_model');
 		$this->load->model('api/Transaksi_model', 'transaksi_model');
-
 		$this->load->model('api/Tipe_model', 'tipe_model');
 		$this->load->model('api/Auth_model', 'auth_model');
 		$this->load->library('dompdfgenerator');
@@ -450,13 +449,28 @@ class Admin extends CI_Controller
 	public function deleteTransaction()
 	{
 		$id = $this->input->post('trans_id');
+		$roomId = $this->input->post('id_room');
+
 		$delete = $this->transaksi_model->delete($id);
+
 		if ($delete == true) {
-			$response = [
-				'status' => true,
-				'code' => 200
+
+			$dataRuangan = [
+				'status' => 1
 			];
-			echo json_encode($response);
+			$updateRuangan = $this->ruangan_model->updateRuangan($roomId, $dataRuangan);
+
+			if ($updateRuangan == true) {
+				$response = [
+					'code' => 200
+				];
+				echo json_encode($response);
+			} else {
+				$response = [
+					'code' => 404
+				];
+				echo json_encode($response);
+			}
 		} else {
 			$response = [
 				'status' => false,
@@ -468,18 +482,34 @@ class Admin extends CI_Controller
 
 	public function sewaSelesai()
 	{
+		$roomId = $this->input->post('id_room');
 		$transId = $this->input->post('trans_id');
 		$data = [
 			'tgl_pengembalian' => $this->input->post('tanggal'),
 			'status_rental' => 'Selesai',
 			'status_pengembalian' => 'Kembali'
 		];
+		$dataRuangan = [
+			'status' => 1
+		];
+
+
 		$update = $this->transaksi_model->update($transId, $data);
 		if ($update == true) {
-			$response = [
-				'code' => 200
-			];
-			echo json_encode($response);
+
+			$updateRuangan = $this->ruangan_model->updateRuangan($roomId, $dataRuangan);
+
+			if ($updateRuangan == true) {
+				$response = [
+					'code' => 200
+				];
+				echo json_encode($response);
+			} else {
+				$response = [
+					'code' => 404
+				];
+				echo json_encode($response);
+			}
 		} else {
 			$response = [
 				'code' => 404
@@ -488,10 +518,11 @@ class Admin extends CI_Controller
 		}
 	}
 
-	public function  downloadLaporan()
+	public function downloadLaporan($dari, $sampai)
 	{
-		$dari   = $this->input->get('dari');
-		$sampai = $this->input->get('sampai');
+		$data['dari'] = $dari;
+		$data['sampai'] = $sampai;
+
 
 		// filename dari pdf ketika didownload
 		$file_pdf = 'Laporan_' . $dari . '-' . $sampai;
