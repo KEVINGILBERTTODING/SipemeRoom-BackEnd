@@ -322,8 +322,10 @@ class Customer extends CI_Controller
 			}
 		}
 	}
+
+	function getUserOrder()
+	{
+		$ruaganId = $this->input->get('id');
+		echo json_encode($this->transaksi_model->getDetailUserOrder($ruaganId));
+	}
 }
-
-
-/* End of file Customer.php */
-/* Location: ./application/controllers/Customer.php */

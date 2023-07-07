@@ -75,4 +75,15 @@ class Transaksi_model extends CI_Model
 		$this->db->where('id_rental', $id);
 		return $this->db->get()->row_array();
 	}
+
+	function getDetailUserOrder($idRuangan)
+	{
+
+		$this->db->select('customer.*');
+		$this->db->from('transaksi');
+		$this->db->join('customer', 'customer.id_customer = transaksi.id_customer', 'left');
+		$this->db->where('id_mobil', $idRuangan);
+		$this->db->where('status_rental', 'Belum Selesai');
+		return $this->db->get()->row_array();
+	}
 }
