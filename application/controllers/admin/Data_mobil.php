@@ -28,7 +28,7 @@ class Data_mobil extends CI_Controller
 
 	public function index()
 	{
-		$data['mobil'] = $this->rental_model->get_data('mobil')->result();
+		$data['mobil'] = $this->rental_model->get_data('ruangan')->result();
 		$data['tipe'] = $this->rental_model->get_data('tipe')->result();
 		$this->load->view('templates_admin/header');
 		$this->load->view('templates_admin/sidebar');
@@ -58,8 +58,6 @@ class Data_mobil extends CI_Controller
 			$warna        = $this->input->post('warna');
 			$tahun        = $this->input->post('tahun');
 			$status       = $this->input->post('status');
-			$harga        = $this->input->post('harga');
-			$denda        = $this->input->post('denda');
 			$ac           = $this->input->post('ac');
 			$sopir        = $this->input->post('sopir');
 			$mp3_player   = $this->input->post('mp3_player');
@@ -80,15 +78,13 @@ class Data_mobil extends CI_Controller
 			}
 			$data = array(
 				'kode_tipe'    => $kode_tipe,
-				'merek'        => $merek,
-				'no_plat'      => $no_plat,
+				'nama_ruangan'        => $merek,
+				'kapasitas'      => $no_plat,
 				'tahun'        => $tahun,
-				'warna'        => $warna,
+				'dekorasi'        => $warna,
 				'status'       => $status,
-				'harga'        => $harga,
-				'denda'        => $denda,
 				'ac'           => $ac,
-				'sopir'        => $sopir,
+				'makanan'        => $sopir,
 				'mp3_player'   => $mp3_player,
 				'central_lock' => $central_lock,
 				'gambar'       => $gambar,
@@ -107,7 +103,7 @@ class Data_mobil extends CI_Controller
 	public function update_mobil($id)
 	{
 		$where = array('id_ruangan' => $id);
-		$data['mobil'] = $this->db->query("SELECT * FROM ruanhan mb, tipe tp WHERE mb.kode_tipe = tp.kode_tipe AND mb.id_ruangan = '$id'")->result();
+		$data['mobil'] = $this->db->query("SELECT * FROM ruangan mb, tipe tp WHERE mb.kode_tipe = tp.kode_tipe AND mb.id_ruangan = '$id'")->result();
 		$data['tipe'] = $this->rental_model->get_data('tipe')->result();
 		$this->load->view('templates_admin/header');
 		$this->load->view('templates_admin/sidebar');
@@ -130,10 +126,8 @@ class Data_mobil extends CI_Controller
 			$warna        = $this->input->post('warna');
 			$tahun        = $this->input->post('tahun');
 			$status       = $this->input->post('status');
-			$harga        = $this->input->post('harga');
-			$denda        = $this->input->post('denda');
 			$ac           = $this->input->post('ac');
-			$sopir        = $this->input->post('sopir');
+			$sopir        = $this->input->post('makanan');
 			$mp3_player   = $this->input->post('mp3_player');
 			$central_lock = $this->input->post('central_lock');
 			$gambar    = $_FILES['gambar']['name'];
@@ -158,8 +152,6 @@ class Data_mobil extends CI_Controller
 				'tahun'        => $tahun,
 				'warna'        => $warna,
 				'status'       => $status,
-				'harga'        => $harga,
-				'denda'        => $denda,
 				'ac'           => $ac,
 				'sopir'        => $sopir,
 				'mp3_player'   => $mp3_player,
@@ -207,8 +199,6 @@ class Data_mobil extends CI_Controller
 		$this->form_validation->set_rules('tahun', 'Tahun', 'required');
 		$this->form_validation->set_rules('warna', 'Warna', 'required');
 		$this->form_validation->set_rules('status', 'Status', 'required');
-		$this->form_validation->set_rules('harga', 'Harga', 'required');
-		$this->form_validation->set_rules('denda', 'Denda', 'required');
 		$this->form_validation->set_rules('ac', 'AC', 'required');
 		$this->form_validation->set_rules('sopir', 'Sopir', 'required');
 		$this->form_validation->set_rules('mp3_player', 'MP3 Player', 'required');

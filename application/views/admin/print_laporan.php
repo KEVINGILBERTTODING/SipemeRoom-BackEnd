@@ -31,8 +31,8 @@
 		<tr>
 			<td><?= $no++; ?></td>
 			<td><?= $tr->nama; ?></td>
-			<td><?= $tr->merek; ?></td>
-			<td><?= date('d/m/Y', strtotime($tr->tgl_rental)); ?></td>
+			<td><?= $tr->nama_ruangan; ?></td>
+			<td><?= date('d/m/Y', strtotime($tr->tgl_sewa)); ?></td>
 			<td><?= date('d/m/Y', strtotime($tr->tgl_kembali)); ?></td>
 			<td>
 				<?php if ($tr->tgl_pengembalian == "0000-00-00") {
@@ -43,7 +43,7 @@
 			</td>
 
 			<td>
-				<?php if ($tr->status_pembayaran == "1") {
+				<?php if ($tr->status_apr == "1") {
 					echo "Kembali";
 				} else {
 					echo "Belum Kembali";
@@ -52,7 +52,7 @@
 
 
 			<td>
-				<?php if ($tr->status_pembayaran == "1") {
+				<?php if ($tr->status_apr == "1") {
 					echo "Selesai";
 				} else {
 					echo "Belum Selesai";
