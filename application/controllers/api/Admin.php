@@ -55,15 +55,12 @@ class Admin extends CI_Controller
 
 			$data = [
 				'kode_tipe' => $this->input->post('kode_tipe'),
-				'merek' => $this->input->post('room_name'),
-				'no_plat' => $this->input->post('kapasitas'),
-				'warna' => $this->input->post('dekorasi'),
+				'nama_ruangan' => $this->input->post('room_name'),
+				'kapasitas' => $this->input->post('kapasitas'),
+				'dekorasi' => $this->input->post('dekorasi'),
 				'tahun' => $this->input->post('tahun'),
 				'status' => $this->input->post('status'),
-				'harga' => $this->input->post('harga'),
-				'denda' => $this->input->post('denda'),
 				'ac' => $this->input->post('ac'),
-				'sopir' => $this->input->post('sopir'),
 				'mp3_player' =>  $this->input->post('mp3_player'),
 				'central_lock' => $this->input->post('central_lock'),
 				'gambar' => $data2['gambar']
@@ -138,15 +135,12 @@ class Admin extends CI_Controller
 
 			$data = [
 				'kode_tipe' => $this->input->post('kode_tipe'),
-				'merek' => $this->input->post('room_name'),
-				'no_plat' => $this->input->post('kapasitas'),
-				'warna' => $this->input->post('dekorasi'),
+				'nama_ruangan' => $this->input->post('room_name'),
+				'kapasitas' => $this->input->post('kapasitas'),
+				'dekorasi' => $this->input->post('dekorasi'),
 				'tahun' => $this->input->post('tahun'),
 				'status' => $this->input->post('status'),
-				'harga' => $this->input->post('harga'),
-				'denda' => $this->input->post('denda'),
 				'ac' => $this->input->post('ac'),
-				'sopir' => $this->input->post('sopir'),
 				'mp3_player' =>  $this->input->post('mp3_player'),
 				'central_lock' => $this->input->post('central_lock')
 			];
@@ -186,15 +180,14 @@ class Admin extends CI_Controller
 
 				$data = [
 					'kode_tipe' => $this->input->post('kode_tipe'),
-					'merek' => $this->input->post('room_name'),
+					'nama_ruangan' => $this->input->post('room_name'),
 					'no_plat' => $this->input->post('kapasitas'),
 					'warna' => $this->input->post('dekorasi'),
 					'tahun' => $this->input->post('tahun'),
 					'status' => $this->input->post('status'),
-					'harga' => $this->input->post('harga'),
-					'denda' => $this->input->post('denda'),
+
 					'ac' => $this->input->post('ac'),
-					'sopir' => $this->input->post('sopir'),
+
 					'mp3_player' =>  $this->input->post('mp3_player'),
 					'central_lock' => $this->input->post('central_lock'),
 					'gambar' => $data2['gambar']
@@ -402,16 +395,16 @@ class Admin extends CI_Controller
 	{
 
 		$file = $this->transaksi_model->getTransaksiById($transId);
-		$path = './assets/upload/' . $file['bukti_pembayaran'];
+		$path = './assets/upload/' . $file['bukti_apr'];
 
 		// Memeriksa tipe file yang diambil dari database
-		if (strpos($file['bukti_pembayaran'], '.pdf') !== false) {
+		if (strpos($file['bukti_apr'], '.pdf') !== false) {
 			// Jika tipe file adalah PDF, atur jenis konten sebagai 'application/pdf'
 			header('Content-Type: application/pdf');
-		} else if (strpos($file['bukti_pembayaran'], '.jpg') !== false) {
+		} else if (strpos($file['bukti_apr'], '.jpg') !== false) {
 			// Jika tipe file adalah JPG, atur jenis konten sebagai 'image/jpeg'
 			header('Content-Type: image/jpeg');
-		} else if (strpos($file['bukti_pembayaran'], '.png') !== false) {
+		} else if (strpos($file['bukti_apr'], '.png') !== false) {
 			// Jika tipe file adalah PNG, atur jenis konten sebagai 'image/png'
 			header('Content-Type: image/png');
 		}
@@ -428,7 +421,7 @@ class Admin extends CI_Controller
 	{
 		$transId = $this->input->post('trans_id');
 		$data = [
-			'status_pembayaran' => 1
+			'status_apr' => 1
 		];
 		$update = $this->transaksi_model->update($transId, $data);
 		if ($update == true) {
@@ -486,7 +479,7 @@ class Admin extends CI_Controller
 		$transId = $this->input->post('trans_id');
 		$data = [
 			'tgl_pengembalian' => $this->input->post('tanggal'),
-			'status_rental' => 'Selesai',
+			'status_sewa' => 'Selesai',
 			'status_pengembalian' => 'Kembali'
 		];
 		$dataRuangan = [
@@ -530,7 +523,7 @@ class Admin extends CI_Controller
 		$paper = 'A4';
 		//orientasi paper potrait / landscape
 		$orientation = "portrait";
-		$data['laporan'] = $this->db->query("SELECT * FROM transaksi tr, mobil mb, customer cs WHERE tr.id_mobil=mb.id_mobil AND tr.id_customer=cs.id_customer AND date(tgl_rental) >= '$dari' AND date(tgl_rental) <= '$sampai'")->result();
+		$data['laporan'] = $this->db->query("SELECT * FROM transaksi tr, ruangan mb, customer cs WHERE tr.id_ruangan=mb.id_ruangan AND tr.id_customer=cs.id_customer AND date(tgl_sewa) >= '$dari' AND date(tgl_sewa) <= '$sampai'")->result();
 		$html = $this->load->view('admin/print_laporan', $data, true);
 		$this->dompdfgenerator->generate($html, $file_pdf, $paper, $orientation);
 	}
@@ -539,7 +532,7 @@ class Admin extends CI_Controller
 	{
 		$dari   = $this->input->get('dari');
 		$sampai = $this->input->get('sampai');
-		$data = $this->db->query("SELECT * FROM transaksi tr, mobil mb, customer cs WHERE tr.id_mobil=mb.id_mobil AND tr.id_customer=cs.id_customer AND date(tgl_rental) >= '$dari' AND date(tgl_rental) <= '$sampai'")->result();
+		$data = $this->db->query("SELECT * FROM transaksi tr, ruangan mb, customer cs WHERE tr.id_ruangan=mb.id_ruangan AND tr.id_customer=cs.id_customer AND date(tgl_sewa) >= '$dari' AND date(tgl_sewa) <= '$sampai'")->result();
 		echo json_encode($data);
 	}
 }

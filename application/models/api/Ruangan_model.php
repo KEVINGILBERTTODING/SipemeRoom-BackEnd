@@ -1,20 +1,6 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-/**
- *
- * Model Ruangan_model
- *
- * This Model for ...
- * 
- * @package		CodeIgniter
- * @category	Model
- * @author    Setiawan Jodi <jodisetiawan@fisip-untirta.ac.id>
- * @link      https://github.com/setdjod/myci-extension/
- * @param     ...
- * @return    ...
- *
- */
 
 class Ruangan_model extends CI_Model
 {
@@ -22,14 +8,14 @@ class Ruangan_model extends CI_Model
 	public function getRuangAvailable()
 	{
 		$this->db->select('*');
-		$this->db->from('mobil');
+		$this->db->from('ruangan');
 		return $this->db->get()->result();
 	}
 
 	public function updateRuangan($id, $data)
 	{
-		$this->db->where('id_mobil', $id);
-		$update = $this->db->update('mobil', $data);
+		$this->db->where('id_ruangan', $id);
+		$update = $this->db->update('ruangan', $data);
 		if ($update) {
 			return true;
 		} else {
@@ -39,7 +25,7 @@ class Ruangan_model extends CI_Model
 
 	public function insert($data)
 	{
-		$insert = $this->db->insert('mobil', $data);
+		$insert = $this->db->insert('ruangan', $data);
 		if ($insert) {
 			return true;
 		} else {
@@ -49,8 +35,8 @@ class Ruangan_model extends CI_Model
 
 	public function deleteRoom($idRoom)
 	{
-		$this->db->where('id_mobil', $idRoom);
-		$delete = $this->db->delete('mobil');
+		$this->db->where('id_ruangan', $idRoom);
+		$delete = $this->db->delete('ruangan');
 
 		if ($delete) {
 			return true;

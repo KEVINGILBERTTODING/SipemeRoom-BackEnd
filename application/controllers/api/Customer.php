@@ -26,22 +26,19 @@ class Customer extends CI_Controller
 	{
 		$idCustomer = $this->input->post('id_customer');
 		$idRuangan = $this->input->post('room_id');
-		$tanggalRental = $this->input->post('tgl_rental');
+		$tanggalRental = $this->input->post('tgl_sewa');
 		$tanggalKembali = $this->input->post('tgl_kembali');
 		$harga = $this->input->post('harga');
 		$denda = $this->input->post('denda');
 
 		$data = [
 			'id_customer' => $idCustomer,
-			'id_mobil' => $idRuangan,
-			'tgl_rental' => $tanggalRental,
+			'id_ruangan' => $idRuangan,
+			'tgl_sewa' => $tanggalRental,
 			'tgl_kembali' => $tanggalKembali,
-			'harga' =>  $harga,
-			'denda' => $denda,
-			'total_denda' => 0,
 			'status_pengembalian' => 'Belum Kembali',
-			'status_rental' => 'Belum Selesai',
-			'status_pembayaran' => 0
+			'status_sewa' => 'Belum Selesai',
+			'status_apr' => 0
 		];
 
 		$insert = $this->transaksi_model->insertTransaksi($data);
@@ -124,7 +121,7 @@ class Customer extends CI_Controller
 		$paper = 'A4';
 		//orientasi paper potrait / landscape
 		$orientation = "portrait";
-		$data['transaksi'] = $this->db->query("SELECT * FROM transaksi tr, mobil mb, customer cs WHERE tr.id_mobil=mb.id_mobil AND tr.id_customer=cs.id_customer AND tr.id_rental='$id'")->result();
+		$data['transaksi'] = $this->db->query("SELECT * FROM transaksi tr, ruangan mb, customer cs WHERE tr.id_ruangan=mb.id_ruangan AND tr.id_customer=cs.id_customer AND tr.id_sewa='$id'")->result();
 		$html = $this->load->view('customer/cetak_invoice', $data, true);
 		$this->dompdfgenerator->generate($html, $file_pdf, $paper, $orientation);
 	}
@@ -132,17 +129,17 @@ class Customer extends CI_Controller
 	public function detailTransaction()
 	{
 		$id = $this->input->post('trans_id');
-		$data = $this->db->query("SELECT * FROM transaksi tr, mobil mb, customer cs WHERE tr.id_mobil=mb.id_mobil AND tr.id_customer=cs.id_customer AND tr.id_rental='$id'")->row_array();
-		$tanggalRental = new DateTime($data['tgl_rental']);
+		$data = $this->db->query("SELECT * FROM transaksi tr, ruangan mb, customer cs WHERE tr.id_ruangan=mb.id_ruangan AND tr.id_customer=cs.id_customer AND tr.id_sewa='$id'")->row_array();
+		$tanggalRental = new DateTime($data['tgl_sewa']);
 		$tanggalKembali = new DateTime($data['tgl_kembali']);
 		$durasi = $tanggalKembali->diff($tanggalRental)->format("%a");
 		$detailTransaksi = [
-			'merek' => $data['merek'],
-			'tgl_rental' => $data['tgl_rental'],
+			'nama_ruangan' => $data['nama_ruangan'],
+			'tgl_sewa' => $data['tgl_sewa'],
 			'tgl_kembali' => $data['tgl_kembali'],
 			'durasi' => $durasi,
-			'status_pembayaran' => $data['status_pembayaran'],
-			'bukti_pembayaran' => $data['bukti_pembayaran']
+			'status_apr' => $data['status_apr'],
+			'bukti_apr' => $data['bukti_apr']
 		];
 		echo json_encode($detailTransaksi);
 	}
@@ -178,7 +175,7 @@ class Customer extends CI_Controller
 		if ($uploadBukti == true) {
 
 			$data = [
-				'bukti_pembayaran' => $data2['bukti']
+				'bukti_apr' => $data2['bukti']
 
 			];
 			$update = $this->transaksi_model->update($transId, $data);
