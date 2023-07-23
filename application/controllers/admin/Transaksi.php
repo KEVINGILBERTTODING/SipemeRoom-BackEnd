@@ -79,8 +79,8 @@ class Transaksi extends CI_Controller
 
 	public function transaksi_selesai_aksi()
 	{
-		$id                  = $this->input->post('id_sewa');
-		$id_mobil            = $this->input->post('id_ruangan');
+		$id                  = $this->input->post('id_rental');
+		$id_mobil            = $this->input->post('id_mobil');
 		$tgl_pengembalian    = $this->input->post('tgl_pengembalian');
 		// $status_rental       = $this->input->post('status_rental');
 		// $status_pengembalian = $this->input->post('status_pengembalian');
@@ -92,7 +92,7 @@ class Transaksi extends CI_Controller
 
 		$data = array(
 			'tgl_pengembalian'    => $tgl_pengembalian,
-			'status_rental'       => 'Selesai',
+			'status_sewa'       => 'Selesai',
 			'status_pengembalian' => 'Kembali',
 		);
 		$data2 = array('status' => 1);

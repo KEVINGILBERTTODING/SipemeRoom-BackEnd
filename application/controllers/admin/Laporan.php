@@ -57,6 +57,8 @@ class Laporan extends CI_Controller
 
 
 		$data['title'] = "Print Laporan Transaksi";
+		$data['sampai'] = $sampai;
+		$data['dari'] = $dari;
 		$data['laporan'] = $this->db->query("SELECT * FROM transaksi tr, ruangan mb, customer cs WHERE tr.id_ruangan=mb.id_ruangan AND tr.id_customer=cs.id_customer AND date(tgl_sewa) >= '$dari' AND date(tgl_sewa) <= '$sampai'")->result();
 
 		$this->load->view('templates_admin/header', $data);
