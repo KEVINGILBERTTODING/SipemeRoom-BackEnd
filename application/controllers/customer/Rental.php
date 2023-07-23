@@ -37,8 +37,8 @@ class Rental extends CI_Controller
 	public function tambah_rental_aksi()
 	{
 		$id_customer     = $this->session->userdata('id_customer');
-		$id_mobil        = $this->input->post('id_ruangan');
-		$tgl_rental      = $this->input->post('tgl_sewa');
+		$id_mobil        = $this->input->post('id_mobil');
+		$tgl_rental      = $this->input->post('tgl_rental');
 		$tgl_kembali     = $this->input->post('tgl_kembali');
 		// $denda           = $this->input->post('denda');
 		// $harga           = $this->input->post('harga');
@@ -53,12 +53,11 @@ class Rental extends CI_Controller
 			'tgl_pengembalian'     => '-',
 			'status_sewa'        => 'Belum Selesai',
 			'status_pengembalian'  => 'Belum Kembali',
-			'total_denda'          => '0'
 		);
 
 		$this->rental_model->insert_data($data, 'transaksi');
 
-		$status = array('status_apr' => '0');
+		$status = array('status' => '0');
 		$id = array('id_ruangan' => $id_mobil);
 		$this->rental_model->update_data('ruangan', $status, $id);
 		$this->session->set_flashdata('pesan', '<div class="alert alert-success alert-dismissible fade show" role="alert">
